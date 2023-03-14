@@ -6,15 +6,11 @@ import ru.practicum.shareit.user.User;
 
 @Component
 @Slf4j
-public class UserInMemoryImpl implements UserDao{
+public class UserInMemoryImpl implements UserDao {
 
     @Override
     public User userFromData(UserDto userDto) {
-        return User.builder()
-                .id(userDto.id)
-                .email(userDto.email)
-                .name(userDto.name)
-                .build();
+        return User.builder().id(userDto.id).email(userDto.email).name(userDto.name).build();
     }
 
     @Override
@@ -26,16 +22,14 @@ public class UserInMemoryImpl implements UserDao{
     public User updateUserFromData(UserDto userDto, User user) {
         User newUser = new User();
         newUser.setId(user.getId());
-        if (userDto.email != null && !userDto.email.isBlank()){
+        if (userDto.email != null && !userDto.email.isBlank()) {
             newUser.setEmail(userDto.email);
-        }
-        else {
+        } else {
             newUser.setEmail(user.getEmail());
         }
-        if (userDto.name != null && !userDto.name.isBlank()){
+        if (userDto.name != null && !userDto.name.isBlank()) {
             newUser.setName(userDto.name);
-        }
-        else {
+        } else {
             newUser.setName(user.getName());
         }
 

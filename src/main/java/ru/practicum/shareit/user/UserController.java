@@ -33,13 +33,13 @@ public class UserController {
     }
 
     @DeleteMapping
-    public Boolean deleteUser(@Valid @RequestBody User user){
+    public Boolean deleteUser(@Valid @RequestBody User user) {
         userService.getUserStorage().delete(user.getId());
         return true;
     }
 
     @DeleteMapping("/{userId}")
-    public Boolean deleteUserById(@PathVariable("userId") Integer userId){
+    public Boolean deleteUserById(@PathVariable("userId") Integer userId) {
         userService.getUserStorage().delete(userId);
         return true;
     }

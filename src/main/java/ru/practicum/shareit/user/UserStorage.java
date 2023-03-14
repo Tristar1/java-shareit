@@ -14,7 +14,7 @@ public interface UserStorage {
 
     public User getById(Integer id) throws ObjectNotFoundException;
 
-    public void delete(Integer id)throws ObjectNotFoundException;
+    public void delete(Integer id) throws ObjectNotFoundException;
 
     public List<User> getAll();
 }

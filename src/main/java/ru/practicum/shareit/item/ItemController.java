@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +29,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public Item update(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
-                       @RequestBody ItemDto itemDto,
-                       @PathVariable("itemId") Integer itemId) throws ValidationException {
+    public Item update(@RequestHeader("X-Sharer-User-Id") Integer ownerId, @RequestBody ItemDto itemDto, @PathVariable("itemId") Integer itemId) throws ValidationException {
         ItemStorage itemStorage = itemService.getItemStorage();
         itemDto.setOwnerId(ownerId);
         itemDto.setId(itemId);
@@ -38,13 +37,13 @@ public class ItemController {
     }
 
     @DeleteMapping
-    public Boolean deleteItem(@Valid @RequestBody Item item){
+    public Boolean deleteItem(@Valid @RequestBody Item item) {
         itemService.getItemStorage().delete(item.getId());
         return true;
     }
 
     @DeleteMapping("/{itemId}")
-    public Boolean deleteItemById(@PathVariable("itemId") Integer itemId){
+    public Boolean deleteItemById(@PathVariable("itemId") Integer itemId) {
         itemService.getItemStorage().delete(itemId);
         return true;
     }
@@ -57,9 +56,8 @@ public class ItemController {
 
     @GetMapping("/search")
     @ResponseBody
-    public List<Item> getReviewByFilmId(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
-                                        @RequestParam String text) {
-        if(text.isBlank()){
+    public List<Item> getReviewByFilmId(@RequestHeader("X-Sharer-User-Id") Integer ownerId, @RequestParam String text) {
+        if (text.isBlank()) {
             return new ArrayList<>();
         }
         return itemService.getItemStorage().getByFilter(text.toLowerCase());

@@ -7,7 +7,7 @@ public class ItemService {
 
     private ItemStorage itemStorage;
 
-    public ItemService(ItemStorage itemStorage){
+    public ItemService(ItemStorage itemStorage) {
         this.itemStorage = itemStorage;
     }
 

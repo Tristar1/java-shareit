@@ -7,6 +7,7 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDao;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class InMemoryItemStorage implements ItemStorage{
+public class InMemoryItemStorage implements ItemStorage {
 
     private final HashMap<Integer, Item> itemList;
     private final ItemValidator itemValidator;
@@ -66,8 +67,8 @@ public class InMemoryItemStorage implements ItemStorage{
     @Override
     public List<Item> getByFilter(String textFilter) {
         return itemList.values().stream().filter(
-                item -> item.getAvailable() && item.getDescription().toLowerCase().contains(textFilter))
-                .collect(Collectors.toList());
+                        item -> item.getAvailable() && item.getDescription().toLowerCase().contains(textFilter))
+                        .collect(Collectors.toList());
     }
 
 }
