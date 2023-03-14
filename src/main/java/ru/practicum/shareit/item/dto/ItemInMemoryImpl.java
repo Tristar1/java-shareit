@@ -11,11 +11,11 @@ import java.util.Objects;
 
 @Component
 @Slf4j
-public class ItemInMemoryImpl implements ItemDao{
+public class ItemInMemoryImpl implements ItemDao {
 
     private final UserService userService;
 
-    public ItemInMemoryImpl(UserService userService){
+    public ItemInMemoryImpl(UserService userService) {
         this.userService = userService;
     }
 
@@ -39,29 +39,25 @@ public class ItemInMemoryImpl implements ItemDao{
     public Item updateItemFromData(ItemDto itemDto, Item item) throws ValidationException {
         Item newItem = new Item();
         newItem.setId(item.getId());
-        if (!Objects.equals(itemDto.ownerId, item.getOwner().getId())){
+        if (!Objects.equals(itemDto.ownerId, item.getOwner().getId())) {
             throw new ObjectNotFoundException("Невозможно поменять владельца предмета!");
-        }
-        else {
+        } else {
             newItem.setOwner(item.getOwner());
         }
 
-        if (itemDto.name != null && !itemDto.name.isBlank()){
+        if (itemDto.name != null && !itemDto.name.isBlank()) {
             newItem.setName(itemDto.name);
-        }
-        else {
+        } else {
             newItem.setName(item.getName());
         }
-        if (itemDto.description != null && !itemDto.description.isBlank()){
+        if (itemDto.description != null && !itemDto.description.isBlank()) {
             newItem.setDescription(itemDto.description);
-        }
-        else {
+        } else {
             newItem.setDescription(item.getDescription());
         }
-        if (itemDto.available != null){
+        if (itemDto.available != null) {
             newItem.setAvailable(itemDto.available);
-        }
-        else {
+        } else {
             newItem.setAvailable(item.getAvailable());
         }
 
