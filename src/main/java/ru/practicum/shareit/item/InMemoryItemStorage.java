@@ -24,7 +24,7 @@ public class InMemoryItemStorage implements ItemStorage {
 
     public InMemoryItemStorage(ItemDao itemDao) {
         this.itemList = new HashMap<>();
-        this.itemValidator = new ItemValidator(this);
+        this.itemValidator = new ItemValidator();
         this.itemDao = itemDao;
     }
 
