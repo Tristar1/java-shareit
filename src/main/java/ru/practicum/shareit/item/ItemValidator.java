@@ -5,12 +5,6 @@ import ru.practicum.shareit.item.model.Item;
 
 public class ItemValidator {
 
-    private final ItemStorage itemStorage;
-
-    public ItemValidator(ItemStorage itemStorage) {
-        this.itemStorage = itemStorage;
-    }
-
     public void valid(Item item) throws ValidationException {
         if (item.getName() == null || item.getName().isBlank()) {
             throw new ValidationException("Название вещи должно быть обязательно заполнено!");

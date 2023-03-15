@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface UserStorage {
 
-    public User create(UserDto user) throws ValidationException;
+    User create(UserDto user) throws ValidationException;
 
-    public User update(UserDto user) throws ValidationException;
+    User update(UserDto user) throws ValidationException;
 
-    public User getById(Integer id) throws ObjectNotFoundException;
+    User getById(Integer id) throws ObjectNotFoundException;
 
-    public void delete(Integer id) throws ObjectNotFoundException;
+    void delete(Integer id) throws ObjectNotFoundException;
 
-    public List<User> getAll();
+    List<User> getAll();
 }

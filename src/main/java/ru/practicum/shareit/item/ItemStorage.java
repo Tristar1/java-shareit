@@ -8,15 +8,15 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 public interface ItemStorage {
-    public Item create(ItemDto itemDto) throws ValidationException;
+    Item create(ItemDto itemDto) throws ValidationException;
 
-    public Item update(ItemDto itemDto) throws ValidationException;
+    Item update(ItemDto itemDto) throws ValidationException;
 
-    public Item getById(Integer id) throws ObjectNotFoundException;
+    Item getById(Integer id) throws ObjectNotFoundException;
 
-    public void delete(Integer id) throws ObjectNotFoundException;
+    void delete(Integer id) throws ObjectNotFoundException;
 
-    public List<Item> getAll(Integer ownerId);
+    List<Item> getAll(Integer ownerId);
 
-    public List<Item> getByFilter(String textFilter);
+    List<Item> getByFilter(String textFilter);
 }

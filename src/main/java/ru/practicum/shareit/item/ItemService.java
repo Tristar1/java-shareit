@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ItemService {
 
-    private ItemStorage itemStorage;
+    private final ItemStorage itemStorage;
 
     public ItemService(ItemStorage itemStorage) {
         this.itemStorage = itemStorage;
