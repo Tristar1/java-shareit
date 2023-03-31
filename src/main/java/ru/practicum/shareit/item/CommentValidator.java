@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingService;
@@ -19,16 +18,16 @@ public class CommentValidator {
 
     public void valid(Comment comment) throws ValidationException {
 
-        if (comment.getText() == null || comment.getText().isBlank()){
+        if (comment.getText() == null || comment.getText().isBlank()) {
             throw new ValidationException("Комментарий не может быть пустым!");
         }
 
-       List<Booking> bookingList = bookingService.getBookingRepository()
-                                   .findAllByBooker_IdAndStatusAndEndBefore(comment.getAuthor().getId(),
-                                           Status.APPROVED, LocalDateTime.now());
+        List<Booking> bookingList = bookingService.getBookingRepository()
+                .findAllByBooker_IdAndStatusAndEndBefore(comment.getAuthor().getId(),
+                        Status.APPROVED, LocalDateTime.now());
 
-       if (bookingList.isEmpty()) {
-           throw new ValidationException("Вы не можете оставлять комментарйи к этой вещи так как не брали ее в аренду!");
-       }
+        if (bookingList.isEmpty()) {
+            throw new ValidationException("Вы не можете оставлять комментарйи к этой вещи так как не брали ее в аренду!");
+        }
     }
 }

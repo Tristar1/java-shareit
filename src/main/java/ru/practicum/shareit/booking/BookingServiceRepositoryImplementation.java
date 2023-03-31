@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class BookingServiceRepositoryImplementation implements BookingService{
+public class BookingServiceRepositoryImplementation implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
@@ -47,7 +47,7 @@ public class BookingServiceRepositoryImplementation implements BookingService{
         return bookingRepository.save(booking);
     }
 
-    private void updateBookingFields(Booking booking, BookingDto bookingDto){
+    private void updateBookingFields(Booking booking, BookingDto bookingDto) {
 
         if (bookingDto.getStart() != null) {
             booking.setStart(bookingDto.getStart());
@@ -66,7 +66,7 @@ public class BookingServiceRepositoryImplementation implements BookingService{
         Optional<Booking> booking = bookingRepository.findById(id);
 
         if (booking.isEmpty()) {
-            throw  new ObjectNotFoundException("Бронь с id " + id + " не найдена!");
+            throw new ObjectNotFoundException("Бронь с id " + id + " не найдена!");
         }
 
         return booking.get();
@@ -80,7 +80,7 @@ public class BookingServiceRepositoryImplementation implements BookingService{
         return getFirstByBookingList(bookingRepository.findByIdAndBookerOrOwner(id, userId));
     }
 
-    private Booking getFirstByBookingList(List<Booking> bookingList){
+    private Booking getFirstByBookingList(List<Booking> bookingList) {
         if (bookingList.isEmpty()) {
             throw new ObjectNotFoundException("Бронь не найдена!");
         }

@@ -24,7 +24,7 @@ import java.util.Optional;
 @Primary
 @Service
 @RequiredArgsConstructor
-public class ItemServiceImplements implements ItemService{
+public class ItemServiceImplements implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
@@ -61,7 +61,7 @@ public class ItemServiceImplements implements ItemService{
         return itemRepository.findById(item.getId()).orElseThrow();
     }
 
-    private void updateItemFields(Item item, ItemDto itemDto){
+    private void updateItemFields(Item item, ItemDto itemDto) {
 
         if (!Objects.equals(itemDto.getOwnerId(), item.getOwner().getId())) {
             throw new ObjectNotFoundException("Невозможно поменять владельца предмета!");
@@ -83,7 +83,7 @@ public class ItemServiceImplements implements ItemService{
         Optional<Item> item = itemRepository.findById(id);
 
         if (item.isEmpty()) {
-            throw  new ObjectNotFoundException("Предмет с id " + id + " не найден!");
+            throw new ObjectNotFoundException("Предмет с id " + id + " не найден!");
         }
 
         return item.get();
@@ -95,7 +95,7 @@ public class ItemServiceImplements implements ItemService{
         Optional<Item> item = itemRepository.findById(id);
 
         if (item.isEmpty()) {
-            throw  new ObjectNotFoundException("Предмет с id " + id + " не найден!");
+            throw new ObjectNotFoundException("Предмет с id " + id + " не найден!");
         }
 
         setBookings(item.get(), ownerId);
@@ -104,19 +104,19 @@ public class ItemServiceImplements implements ItemService{
         return item.get();
     }
 
-    private void setBookings(Item item, Integer ownerId){
+    private void setBookings(Item item, Integer ownerId) {
 
         if (item.getOwner().getId().equals(ownerId)) {
             Optional<Booking> nextBooking = bookingRepository.findFirstByByItemIdAndStartAfter(item.getId(), LocalDateTime.now());
-            item.setNextBooking( nextBooking.isEmpty() ? null : BookingMapper.mapToBookingDto(nextBooking.get()));
+            item.setNextBooking(nextBooking.isEmpty() ? null : BookingMapper.mapToBookingDto(nextBooking.get()));
 
             Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndEndBefore(item.getId(), LocalDateTime.now());
-            item.setLastBooking( lastBooking.isEmpty() ? null : BookingMapper.mapToBookingDto(lastBooking.get()));
+            item.setLastBooking(lastBooking.isEmpty() ? null : BookingMapper.mapToBookingDto(lastBooking.get()));
         }
 
     }
 
-    private void setComments(Item item){
+    private void setComments(Item item) {
 
         List<CommentDto> commentList = CommentMapper.mapToCommentDto(commentRepository.findAllByItem_Id(item.getId()));
 
@@ -128,7 +128,7 @@ public class ItemServiceImplements implements ItemService{
 
     @Override
     public void delete(Integer id) throws ObjectNotFoundException {
-       itemRepository.deleteById(id);
+        itemRepository.deleteById(id);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class ItemServiceImplements implements ItemService{
         List<Item> itemList = new ArrayList<>();
         for (Item item : itemRepository.findAllByOwnerId(ownerId)) {
             setComments(item);
-            setBookings(item,ownerId);
+            setBookings(item, ownerId);
             itemList.add(item);
         }
 

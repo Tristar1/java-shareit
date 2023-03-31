@@ -14,7 +14,7 @@ public interface BookingService {
 
     Booking getById(Integer id) throws ObjectNotFoundException;
 
-    Booking getByIdAndUserId(Integer id, Integer userId ) throws ObjectNotFoundException;
+    Booking getByIdAndUserId(Integer id, Integer userId) throws ObjectNotFoundException;
 
     void delete(Integer id) throws ObjectNotFoundException;
 
