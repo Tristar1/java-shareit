@@ -7,6 +7,7 @@ import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +34,7 @@ public class UserServiceRepositoryImpl implements UserService {
         return userRepository.save(user);
     }
 
-    private void updateUserFields(User user, UserDto userDto){
+    private void updateUserFields(User user, UserDto userDto) {
 
         if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) {
             user.setEmail(userDto.getEmail());
@@ -48,7 +49,7 @@ public class UserServiceRepositoryImpl implements UserService {
         Optional<User> user = userRepository.findById(id);
 
         if (user.isEmpty()) {
-            throw  new ObjectNotFoundException("Пользователь с id " + id + " не найден!");
+            throw new ObjectNotFoundException("Пользователь с id " + id + " не найден!");
         }
 
         return user.get();

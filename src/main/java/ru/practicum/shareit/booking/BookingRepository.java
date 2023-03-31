@@ -15,13 +15,13 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "left join items as i on b.item_id = i.id  \n" +
             "where b.id = ?1 and (i.user_id = ?2 or b.user_id = ?2) \n" +
             "order by b.start_time DESC", nativeQuery = true)
-    List<Booking> findByIdAndBookerOrOwner(Integer Id, Integer userId);
+    List<Booking> findByIdAndBookerOrOwner(Integer id, Integer userId);
 
     @Query(value = "select * from bookings as b\n" +
             "left join items as i on b.item_id = i.id  \n" +
             "where b.id = ?1 and i.user_id = ?2 \n" +
             "order by b.start_time DESC", nativeQuery = true)
-    List<Booking> findByIdAndOwner(Integer Id, Integer userId);
+    List<Booking> findByIdAndOwner(Integer id, Integer userId);
 
     List<Booking> findAllByBooker_Id(Integer bookerId, Sort sort);
 
@@ -59,10 +59,10 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             "left join items as i on b.item_id = i.id  \n" +
             "where i.user_id = ?1 and b.start_time <= ?2 and b.end_time > ?2 \n" +
             "order by b.start_time DESC", nativeQuery = true)
-    List<Booking> findCurrentOwnerBookings(Integer user_id, LocalDateTime localDateTime);
+    List<Booking> findCurrentOwnerBookings(Integer userId, LocalDateTime localDateTime);
 
     @Query("select b from Booking b where b.item.id = ?1 and b.start >= ?2 and b.end <= ?2 and b.status = 'APPROVED'")
-    List<Booking> havingBookingsAtCurrentDate(Integer item_id, LocalDateTime start);
+    List<Booking> havingBookingsAtCurrentDate(Integer itemId, LocalDateTime start);
 
     @Query(value = "select * from bookings as b where item_id = ?1 and start_time > ?2 " +
             "and status like 'APPROVED'order by start_time limit 1",
@@ -74,11 +74,11 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             nativeQuery = true)
     Optional<Booking> findFirstByItemIdAndEndBefore(Integer itemId, LocalDateTime endTime);
 
-    List<Booking> findAllByBooker_IdAndStatusAndEndBefore(Integer user_id, Status status, LocalDateTime localDateTime);
+    List<Booking> findAllByBooker_IdAndStatusAndEndBefore(Integer userId, Status status, LocalDateTime localDateTime);
 
     @Query(value = "select * from bookings as b where user_id = ?1 and start_time <= ?2  " +
             "and end_time > ?2 order by end_time DESC",
             nativeQuery = true)
-    List<Booking> findCurrentBookings(Integer user_id, LocalDateTime localDateTime);
+    List<Booking> findCurrentBookings(Integer userId, LocalDateTime localDateTime);
 
 }
