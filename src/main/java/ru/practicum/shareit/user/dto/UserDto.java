@@ -8,8 +8,7 @@ import lombok.*;
 @Data
 public class UserDto {
 
-    protected String email;
-    protected String name;
     protected Integer id;
-
+    protected String name;
+    protected String email;
 }
