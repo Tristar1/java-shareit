@@ -46,5 +46,4 @@ public class Item {
 
     @Transient
     private ItemRequest request;
-    
 }
