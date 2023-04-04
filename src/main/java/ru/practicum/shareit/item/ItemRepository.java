@@ -12,7 +12,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
     List<Item> findAllByOwnerId(Integer userId);
 
      @Query("Select i from Item i where " +
-            "(lower(i.description) like lower(concat('%', ?1, '%')) " +
+            "i.available = true and (lower(i.description) like lower(concat('%', ?1, '%')) " +
             "or lower(i.name) like lower(concat('%', ?1, '%'))) order by id")
     List<Item> findAllByTextFilter(String textFilter, Integer userId);
 
