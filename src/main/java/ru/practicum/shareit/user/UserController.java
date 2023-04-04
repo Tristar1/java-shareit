@@ -17,36 +17,35 @@ public class UserController {
 
     @GetMapping
     public List<User> findAll() {
-        return userService.getUserStorage().getAll();
+        return userService.getAll();
     }
 
     @PostMapping
     public User create(@RequestBody UserDto user) throws ValidationException {
-        return userService.getUserStorage().create(user);
+        return userService.create(user);
     }
 
     @PatchMapping("/{userId}")
     public User update(@RequestBody UserDto userDto, @PathVariable("userId") Integer userId) throws ValidationException {
-        UserStorage userStorage = userService.getUserStorage();
         userDto.setId(userId);
-        return userStorage.update(userDto);
+        return userService.update(userDto);
     }
 
     @DeleteMapping
     public Boolean deleteUser(@Valid @RequestBody User user) {
-        userService.getUserStorage().delete(user.getId());
+        userService.delete(user.getId());
         return true;
     }
 
     @DeleteMapping("/{userId}")
     public Boolean deleteUserById(@PathVariable("userId") Integer userId) {
-        userService.getUserStorage().delete(userId);
+        userService.delete(userId);
         return true;
     }
 
     @GetMapping("/{id}")
     @ResponseBody
     public User getUserById(@PathVariable("id") Integer id) {
-        return userService.getUserStorage().getById(id);
+        return userService.getById(id);
     }
 }

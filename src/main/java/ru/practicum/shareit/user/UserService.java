@@ -1,17 +1,19 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.user.dto.UserDto;
+import java.util.List;
 
-@Service
-public class UserService {
+public interface UserService {
 
-    private UserStorage userStorage;
+    User create(UserDto userDto) throws ValidationException;
 
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
+    User update(UserDto userDto) throws ValidationException;
 
-    public UserStorage getUserStorage() {
-        return userStorage;
-    }
+    User getById(Integer id) throws ObjectNotFoundException;
+
+    void delete(Integer id) throws ObjectNotFoundException;
+
+    List<User> getAll();
 }
