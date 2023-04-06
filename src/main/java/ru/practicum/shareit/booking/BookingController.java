@@ -47,13 +47,13 @@ public class BookingController {
     }
 
     @DeleteMapping
-    public Boolean deleteItem(@Valid @RequestBody BookingDto bookingDto) {
+    public Boolean deleteBooking(@Valid @RequestBody BookingDto bookingDto) {
         bookingService.delete(bookingDto.getId());
         return true;
     }
 
     @DeleteMapping("/{bookingId}")
-    public Boolean deleteItemById(@PathVariable("bookingId") Integer bookingId) {
+    public Boolean deleteBookingById(@PathVariable("bookingId") Integer bookingId) {
         bookingService.delete(bookingId);
         return true;
     }
