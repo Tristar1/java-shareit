@@ -14,7 +14,7 @@ import java.util.Optional;
 @Primary
 @Service
 @RequiredArgsConstructor
-public class UserServiceRepositoryImpl implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserValidator userValidator;
@@ -29,19 +29,9 @@ public class UserServiceRepositoryImpl implements UserService {
     @Override
     public User update(UserDto userDto) throws ValidationException {
         User user = userRepository.findById(userDto.getId()).orElseThrow();
-        updateUserFields(user, userDto);
+        UserMapper.updateUserFields(user, userDto);
         userValidator.valid(user);
         return userRepository.save(user);
-    }
-
-    private void updateUserFields(User user, UserDto userDto) {
-
-        if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) {
-            user.setEmail(userDto.getEmail());
-        }
-        if (userDto.getName() != null && !userDto.getName().isBlank()) {
-            user.setName(userDto.getName());
-        }
     }
 
     @Override

@@ -32,4 +32,14 @@ public class UserMapper {
                 .id(userDto.getId())
                 .build();
     }
+
+    public static void updateUserFields(User user, UserDto userDto) {
+
+        if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) {
+            user.setEmail(userDto.getEmail());
+        }
+        if (userDto.getName() != null && !userDto.getName().isBlank()) {
+            user.setName(userDto.getName());
+        }
+    }
 }

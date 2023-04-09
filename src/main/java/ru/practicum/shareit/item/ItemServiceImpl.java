@@ -18,13 +18,12 @@ import ru.practicum.shareit.user.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Primary
 @Service
 @RequiredArgsConstructor
-public class ItemServiceImplements implements ItemService {
+public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
@@ -55,27 +54,10 @@ public class ItemServiceImplements implements ItemService {
     @Override
     public Item update(ItemDto itemDto) throws ValidationException {
         Item item = itemRepository.findById(itemDto.getId()).orElseThrow();
-        updateItemFields(item, itemDto);
+        ItemMapper.updateItemFields(item, itemDto);
         ItemValidator.valid(item);
         itemRepository.saveAndFlush(item);
         return itemRepository.findById(item.getId()).orElseThrow();
-    }
-
-    private void updateItemFields(Item item, ItemDto itemDto) {
-
-        if (!Objects.equals(itemDto.getOwnerId(), item.getOwner().getId())) {
-            throw new ObjectNotFoundException("Невозможно поменять владельца предмета!");
-        }
-
-        if (itemDto.getName() != null && !itemDto.getName().isBlank()) {
-            item.setName(itemDto.getName());
-        }
-        if (itemDto.getDescription() != null && !itemDto.getDescription().isBlank()) {
-            item.setDescription(itemDto.getDescription());
-        }
-        if (itemDto.getAvailable() != null) {
-            item.setAvailable(itemDto.getAvailable());
-        }
     }
 
     @Override
@@ -87,7 +69,6 @@ public class ItemServiceImplements implements ItemService {
         }
 
         return item.get();
-
     }
 
     @Override
@@ -102,28 +83,6 @@ public class ItemServiceImplements implements ItemService {
         setComments(item.get());
 
         return item.get();
-    }
-
-    private void setBookings(Item item, Integer ownerId) {
-
-        if (item.getOwner().getId().equals(ownerId)) {
-            Optional<Booking> nextBooking = bookingRepository.findFirstByByItemIdAndStartAfter(item.getId(), LocalDateTime.now());
-            item.setNextBooking(nextBooking.isEmpty() ? null : BookingMapper.mapToBookingDto(nextBooking.get()));
-
-            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndEndBefore(item.getId(), LocalDateTime.now());
-            item.setLastBooking(lastBooking.isEmpty() ? null : BookingMapper.mapToBookingDto(lastBooking.get()));
-        }
-
-    }
-
-    private void setComments(Item item) {
-
-        List<CommentDto> commentList = CommentMapper.mapToCommentDto(commentRepository.findAllByItem_Id(item.getId()));
-
-        if (!commentList.isEmpty()) {
-            item.setComments(commentList);
-        }
-
     }
 
     @Override
@@ -146,6 +105,26 @@ public class ItemServiceImplements implements ItemService {
     @Override
     public List<Item> getByFilter(String textFilter, Integer userId) {
         return itemRepository.findAllByTextFilter(textFilter, userId);
+    }
+
+    private void setBookings(Item item, Integer ownerId) {
+
+        if (item.getOwner().getId().equals(ownerId)) {
+            Optional<Booking> nextBooking = bookingRepository.findFirstByByItemIdAndStartAfter(item.getId(), LocalDateTime.now());
+            item.setNextBooking(nextBooking.isEmpty() ? null : BookingMapper.toBookingDto(nextBooking.get()));
+
+            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndEndBefore(item.getId(), LocalDateTime.now());
+            item.setLastBooking(lastBooking.isEmpty() ? null : BookingMapper.toBookingDto(lastBooking.get()));
+        }
+    }
+
+    private void setComments(Item item) {
+
+        List<CommentDto> commentList = CommentMapper.mapToCommentDto(commentRepository.findAllByItem_Id(item.getId()));
+
+        if (!commentList.isEmpty()) {
+            item.setComments(commentList);
+        }
     }
 
 }

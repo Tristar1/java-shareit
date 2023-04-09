@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class BookingServiceRepositoryImplementation implements BookingService {
+public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
@@ -24,14 +24,15 @@ public class BookingServiceRepositoryImplementation implements BookingService {
 
     @Override
     public Booking create(BookingDto bookingDto) throws ValidationException {
-        Booking booking = BookingMapper.mapToNewBooking(bookingDto);
+        Booking booking = BookingMapper.toBooking(bookingDto);
         booking.setBooker(userRepository.findById(bookingDto.getBookerId())
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + bookingDto.getBookerId())));
         booking.setItem(itemRepository.findById(bookingDto.getItemId())
                 .orElseThrow(() -> new ObjectNotFoundException("Предмет не найден id " + bookingDto.getItemId())));
         BookingValidator.valid(booking);
         if (!bookingRepository.havingBookingsAtCurrentDate(bookingDto.getItemId(), booking.getStart()).isEmpty()) {
-            throw new ValidationException("Этот пердмет уже забронирован на эти даты!");
+            throw new ValidationException("Пердмет " + booking.getItem().toString() +
+                    " уже забронирован в интервале с " + bookingDto.getStart() + " по " + bookingDto.getEnd() + " !");
         }
         return bookingRepository.save(booking);
     }
@@ -42,23 +43,8 @@ public class BookingServiceRepositoryImplementation implements BookingService {
         if (booking.getStatus() == Status.APPROVED) {
             throw new ValidationException("Нельзя менять статус после утверждения!");
         }
-        updateBookingFields(booking, bookingDto);
-        //BookingValidator.valid(booking);
+        BookingMapper.updateBookingFields(booking, bookingDto);
         return bookingRepository.save(booking);
-    }
-
-    private void updateBookingFields(Booking booking, BookingDto bookingDto) {
-
-        if (bookingDto.getStart() != null) {
-            booking.setStart(bookingDto.getStart());
-        }
-        if (bookingDto.getEnd() != null) {
-            booking.setEnd(bookingDto.getEnd());
-        }
-        if (bookingDto.getStatus() != null) {
-            booking.setStatus(Status.valueOf(bookingDto.getStatus()));
-        }
-
     }
 
     @Override
@@ -78,14 +64,6 @@ public class BookingServiceRepositoryImplementation implements BookingService {
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + userId));
 
         return getFirstByBookingList(bookingRepository.findByIdAndBookerOrOwner(id, userId));
-    }
-
-    private Booking getFirstByBookingList(List<Booking> bookingList) {
-        if (bookingList.isEmpty()) {
-            throw new ObjectNotFoundException("Бронь не найдена!");
-        }
-
-        return bookingList.get(0);
     }
 
     @Override
@@ -140,6 +118,14 @@ public class BookingServiceRepositoryImplementation implements BookingService {
                 throw new ValidationException("Unknown state: " + state);
         }
 
+    }
+
+    private Booking getFirstByBookingList(List<Booking> bookingList) {
+        if (bookingList.isEmpty()) {
+            throw new ObjectNotFoundException("Бронь не найдена!");
+        }
+
+        return bookingList.get(0);
     }
 
 }
