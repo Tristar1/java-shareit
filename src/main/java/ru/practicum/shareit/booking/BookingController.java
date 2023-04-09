@@ -64,6 +64,4 @@ public class BookingController {
                                   @PathVariable("id") Integer id) {
         return bookingService.getByIdAndUserId(id, userId);
     }
-
-
 }
