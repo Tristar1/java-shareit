@@ -13,6 +13,7 @@ import ru.practicum.shareit.user.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +50,7 @@ public class RequestServiceImpl implements RequestService{
     public List<ItemRequest> getAll(Integer userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + userId));
-        List<ItemRequest> requestList = requestRepository.getAllByRequestor_IdOrderByCreatedDesc(userId);
+        List<ItemRequest> requestList = requestRepository.findAllByRequestorIdOrderByCreatedDesc(userId);
 
         for (ItemRequest request : requestList){
             setItems(request);
@@ -62,7 +63,8 @@ public class RequestServiceImpl implements RequestService{
     public List<ItemRequest> getAll(Integer ownerId, Integer from, Integer size) {
         userRepository.findById(ownerId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + ownerId));
-        List<ItemRequest> requestList = requestRepository.getAllByRequestor_IdOrderByCreatedDesc(ownerId);
+        List<ItemRequest> requestList = requestRepository.findAllByOwnerIdOrderByCreatedDesc(ownerId)
+                .stream().skip(from).limit(size).collect(Collectors.toList());
         for (ItemRequest request : requestList){
             setItems(request);
         }

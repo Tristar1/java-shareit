@@ -23,8 +23,8 @@ public interface ItemService {
 
     void delete(Integer id) throws ObjectNotFoundException;
 
-    List<Item> getAll(Integer ownerId);
+    List<Item> getAll(Integer ownerId, Integer from, Integer size);
 
-    List<Item> getByFilter(String textFilter, Integer userId);
+    List<Item> getByFilter(String textFilter, Integer userId, Integer from, Integer size);
 
 }
