@@ -21,12 +21,12 @@ class RequestRepositoryTest {
     private RequestRepository repository;
 
     @Test
-    void getAllByRequestor_IdOrderByCreatedDesc() {
+    void findAllByRequestorIdOrderByCreatedDesc() {
         User requestor = User.builder().name("newName").email("newUser@user.com").build();
         ItemRequest itemRequest = ItemRequest.builder().description("descr").created(LocalDateTime.now()).requestor(requestor).build();
         entityManager.persist(requestor);
         entityManager.persist(itemRequest);
-        List<ItemRequest> result = repository.findAllByOwnerIdOrderByCreatedDesc(requestor.getId());
+        List<ItemRequest> result = repository.findAllByRequestorIdOrderByCreatedDesc(requestor.getId());
         then(result).size().isEqualTo(1);
         then(result).containsExactlyElementsOf(List.of(itemRequest));
     }
