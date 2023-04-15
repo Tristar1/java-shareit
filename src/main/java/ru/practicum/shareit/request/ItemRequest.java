@@ -34,5 +34,4 @@ public class ItemRequest {
 
     @Transient
     private List<ItemDto> items;
-
 }

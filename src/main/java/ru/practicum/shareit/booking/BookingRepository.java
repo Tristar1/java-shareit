@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findCurrentOwnerBookings(Integer userId, LocalDateTime localDateTime);
 
     @Query("select b from Booking b where b.item.id = ?1 and b.start <= ?2 and b.end >= ?2 and b.status = 'APPROVED'")
+
     List<Booking> havingBookingsAtCurrentDate(Integer itemId, LocalDateTime start);
 
     @Query(value = "select * from bookings as b where item_id = ?1 and start_time > ?2 " +
@@ -65,6 +67,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query(value = "select * from bookings as b where b.booker_id = ?1 and b.start_time <= ?2  " +
             "and b.end_time > ?2 order by start_time DESC", nativeQuery = true)
+
     List<Booking> findCurrentBookings(Integer userId, LocalDateTime localDateTime);
 
 }

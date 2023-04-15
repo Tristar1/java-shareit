@@ -47,6 +47,7 @@ public class BookingServiceImpl implements BookingService {
         if (booking == null) {
             throw new ObjectNotFoundException("Бронь с id " + bookingDto.getId() + " не найдена!");
         }
+
         if (booking.getStatus() == Status.APPROVED) {
             throw new ValidationException("Нельзя менять статус после утверждения!");
         }
@@ -113,6 +114,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+
     public List<Booking> getAll(Integer bookerId, String state,
                                 Integer from, Integer size, LocalDateTime dateTime) throws ValidationException {
         userRepository.findById(bookerId).orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + bookerId));

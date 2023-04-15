@@ -17,4 +17,5 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
     List<Item> findAllByTextFilter(String textFilter, Integer userId);
 
     List<Item> findAllByRequest_Id(Integer requestId);
+
 }

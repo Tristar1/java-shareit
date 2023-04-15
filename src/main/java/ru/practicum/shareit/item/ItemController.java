@@ -34,6 +34,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ItemDto update(@RequestHeader("X-Sharer-User-Id") Integer ownerId, @RequestBody ItemDto itemDto, @PathVariable("itemId") Integer itemId) throws ValidationException {
+
         itemDto.setOwnerId(ownerId);
         itemDto.setId(itemId);
         return itemService.update(itemDto);

@@ -29,13 +29,13 @@ public class Booking {
 
     @NotNull
     @ManyToOne
+
     @JoinColumn(name = "item_id")
     Item item;
     @NotNull
     @ManyToOne
     @JoinColumn(name = "booker_id")
     User booker;
-
     @Builder.Default
     @Enumerated(EnumType.STRING)
     Status status = Status.WAITING;

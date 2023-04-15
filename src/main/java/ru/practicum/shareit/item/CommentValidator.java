@@ -17,5 +17,12 @@ public class CommentValidator {
             throw new ValidationException("Комментарий не может быть пустым!");
         }
 
+        List<Booking> bookingList = bookingService.getBookingRepository()
+                .findAllByBooker_IdAndStatusAndEndBefore(comment.getAuthor().getId(),
+                        Status.APPROVED, LocalDateTime.now());
+
+        if (bookingList.isEmpty()) {
+            throw new ValidationException("Вы не можете оставлять комментарйи к этой вещи так как не брали ее в аренду!");
+        }
     }
 }
