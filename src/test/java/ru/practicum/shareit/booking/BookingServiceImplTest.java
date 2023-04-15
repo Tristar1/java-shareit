@@ -100,11 +100,11 @@ class BookingServiceImplTest {
         booking.setItem(item);
         booking.setBooker(user);
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
-        when(repository.findByIdAndAndBooker_Id(1,1)).thenReturn(booking);
-        when(repository.findByIdAndOwner(1,1)).thenReturn(booking);
+        when(repository.findByIdAndAndBooker_Id(1, 1)).thenReturn(booking);
+        when(repository.findByIdAndOwner(1, 1)).thenReturn(booking);
 
-        service.getByIdAndUserId(1,1);
-        verify(repository, times(2)).findByIdAndAndBooker_Id(1,1);
+        service.getByIdAndUserId(1, 1);
+        verify(repository, times(2)).findByIdAndAndBooker_Id(1, 1);
     }
 
     @Test
@@ -141,17 +141,17 @@ class BookingServiceImplTest {
         when(repository.findAllByItemOwnerAndStartAfter(2, dateTime)).thenReturn(bookings);
         when(repository.findCurrentOwnerBookings(2, dateTime)).thenReturn(bookings);
 
-        service.getAllByOwner(2,"ALL",1,1, dateTime);
+        service.getAllByOwner(2, "ALL", 1, 1, dateTime);
         verify(repository, times(1)).findAllByItemOwner(2);
 
-        service.getAllByOwner(2,"PAST",1,1, dateTime);
+        service.getAllByOwner(2, "PAST", 1, 1, dateTime);
         verify(repository, times(1)).findAllByItemOwnerAndEndBefore(2, dateTime);
-        service.getAllByOwner(2,"FUTURE",1,1, dateTime);
+        service.getAllByOwner(2, "FUTURE", 1, 1, dateTime);
         verify(repository, times(1)).findAllByItemOwnerAndStartAfter(2, dateTime);
-        service.getAllByOwner(2,"CURRENT",1,1, dateTime);
+        service.getAllByOwner(2, "CURRENT", 1, 1, dateTime);
         verify(repository, times(1)).findCurrentOwnerBookings(2, dateTime);
-        service.getAllByOwner(2,"WAITING",1,1, dateTime);
-        service.getAllByOwner(2,"REJECTED",1,1, dateTime);
+        service.getAllByOwner(2, "WAITING", 1, 1, dateTime);
+        service.getAllByOwner(2, "REJECTED", 1, 1, dateTime);
         verify(repository, times(1)).findAllByItemOwnerAndStatus(2, "WAITING");
         verify(repository, times(1)).findAllByItemOwnerAndStatus(2, "REJECTED");
 
@@ -181,17 +181,17 @@ class BookingServiceImplTest {
         when(repository.findAllByStartAfter(dateTime, sort)).thenReturn(bookings);
         when(repository.findCurrentBookings(1, dateTime)).thenReturn(bookings);
 
-        service.getAll(1,"ALL",1,1, dateTime);
+        service.getAll(1, "ALL", 1, 1, dateTime);
         verify(repository, times(1)).findAllByBooker_Id(1, sort);
 
-        service.getAll(1,"PAST",1,1, dateTime);
+        service.getAll(1, "PAST", 1, 1, dateTime);
         verify(repository, times(1)).findAllByEndBefore(dateTime, sort);
-        service.getAll(1,"FUTURE",1,1, dateTime);
-        verify(repository, times(1)).findAllByStartAfter( dateTime, sort);
-        service.getAll(1,"CURRENT",1,1, dateTime);
+        service.getAll(1, "FUTURE", 1, 1, dateTime);
+        verify(repository, times(1)).findAllByStartAfter(dateTime, sort);
+        service.getAll(1, "CURRENT", 1, 1, dateTime);
         verify(repository, times(1)).findCurrentBookings(1, dateTime);
-        service.getAll(1,"WAITING",1,1, dateTime);
-        service.getAll(1,"REJECTED",1,1, dateTime);
+        service.getAll(1, "WAITING", 1, 1, dateTime);
+        service.getAll(1, "REJECTED", 1, 1, dateTime);
         verify(repository, times(1)).findAllByBooker_IdAndStatus(1, Status.WAITING, sort);
         verify(repository, times(1)).findAllByBooker_IdAndStatus(1, Status.REJECTED, sort);
     }

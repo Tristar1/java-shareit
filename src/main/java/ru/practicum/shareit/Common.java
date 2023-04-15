@@ -20,65 +20,59 @@ public class Common {
 
     static ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 
-    public static String userToJson (User user) {
+    public static String userToJson(User user) {
 
         String json;
         try {
             json = ow.writeValueAsString(user);
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             json = "";
         }
         return json;
     }
 
-    public static String itemDtoToJson (ItemDto item) {
+    public static String itemDtoToJson(ItemDto item) {
 
         String json;
         try {
             json = ow.writeValueAsString(item);
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             json = "";
         }
         return json;
     }
 
-    public static String commentDtoToJson (CommentDto commentDto) {
+    public static String commentDtoToJson(CommentDto commentDto) {
 
         String json;
         try {
             json = ow.writeValueAsString(commentDto);
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             json = "";
         }
         return json;
     }
 
-    public static String bookingDtoToJson (BookingDto bookingDto) {
+    public static String bookingDtoToJson(BookingDto bookingDto) {
 
         String json;
         try {
             json = ow.writeValueAsString(bookingDto);
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             json = "";
         }
         return json;
     }
 
-    public static String requestDtoToJson (ItemRequestDto requestDto) {
+    public static String requestDtoToJson(ItemRequestDto requestDto) {
 
         String json;
         try {
             json = ow.writeValueAsString(requestDto);
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             json = "";
         }
         return json;
     }
-
 
 }

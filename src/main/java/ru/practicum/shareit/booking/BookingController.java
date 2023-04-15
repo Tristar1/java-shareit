@@ -21,7 +21,7 @@ public class BookingController {
                                  @RequestParam(name = "state", defaultValue = "ALL") String state,
                                  @RequestParam(name = "from", defaultValue = "0") Integer from,
                                  @RequestParam(name = "size", defaultValue = "25") Integer size) throws ValidationException {
-        if (from <0 || size <=0){
+        if (from < 0 || size <= 0) {
             throw new ValidationException("Неверно заполнены параметры постраничного просмотра!");
         }
         return bookingService.getAll(bookerId, state.toUpperCase(), from, size, LocalDateTime.now());
@@ -32,7 +32,7 @@ public class BookingController {
                                     @RequestParam(name = "state", defaultValue = "ALL") String state,
                                     @RequestParam(name = "from", defaultValue = "0") Integer from,
                                     @RequestParam(name = "size", defaultValue = "25") Integer size) throws ValidationException {
-        if (from <0 || size <=0){
+        if (from < 0 || size <= 0) {
             throw new ValidationException("Неверно заполнены параметры постраничного просмотра!");
         }
         return bookingService.getAllByOwner(bookerId, state.toUpperCase(), from, size, LocalDateTime.now());
@@ -40,7 +40,8 @@ public class BookingController {
 
     @PostMapping
     @ResponseBody
-    public Booking create(@RequestHeader("X-Sharer-User-Id") Integer ownerId, @RequestBody BookingDto bookingDto) throws ValidationException {
+    public Booking create(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
+                          @RequestBody BookingDto bookingDto) throws ValidationException {
         bookingDto.setBookerId(ownerId);
         return bookingService.create(bookingDto);
     }
@@ -75,6 +76,5 @@ public class BookingController {
                                   @PathVariable("id") Integer id) {
         return bookingService.getByIdAndUserId(id, userId);
     }
-
 
 }

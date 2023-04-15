@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class RequestServiceImpl implements RequestService{
+public class RequestServiceImpl implements RequestService {
 
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
@@ -52,11 +52,11 @@ public class RequestServiceImpl implements RequestService{
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + userId));
         List<ItemRequest> requestList = requestRepository.findAllByRequestorIdOrderByCreatedDesc(userId);
 
-        for (ItemRequest request : requestList){
+        for (ItemRequest request : requestList) {
             setItems(request);
         }
 
-        return  requestList;
+        return requestList;
     }
 
     @Override
@@ -65,14 +65,14 @@ public class RequestServiceImpl implements RequestService{
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + ownerId));
         List<ItemRequest> requestList = requestRepository.findAllByOwnerIdOrderByCreatedDesc(ownerId)
                 .stream().skip(from).limit(size).collect(Collectors.toList());
-        for (ItemRequest request : requestList){
+        for (ItemRequest request : requestList) {
             setItems(request);
         }
 
         return requestList;
     }
 
-    private void setItems(ItemRequest itemRequest){
+    private void setItems(ItemRequest itemRequest) {
         List<Item> itemList = itemRepository.findAllByRequest_Id(itemRequest.getId());
         itemRequest.setItems(ItemMapper.mapToItemDto(itemList));
     }
