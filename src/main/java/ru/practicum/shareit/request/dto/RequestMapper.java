@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request.dto;
 
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.request.ItemRequest;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ public class RequestMapper {
                 .description(request.getDescription())
                 .id(request.getId())
                 .created(request.getCreated())
+                .items(ItemMapper.mapToItemDto(request.getItems()))
                 .build();
     }
 

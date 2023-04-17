@@ -43,7 +43,8 @@ public class Item {
     private BookingDto lastBooking;
     @Transient
     private BookingDto nextBooking;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private ItemRequest request;
 }

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
@@ -26,11 +26,12 @@ public class ItemRequest {
     private String description;
     @Column
     private LocalDateTime created;
+
     @OneToOne
     @MapsId
     @JoinColumn(name = "requestor_id")
     private User requestor;
 
-    @Transient
-    private List<ItemDto> items;
+    @OneToMany(mappedBy="request")
+    private List<Item> items;
 }

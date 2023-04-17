@@ -10,10 +10,10 @@ public interface RequestService {
 
     ItemRequest create(ItemRequestDto requestDto) throws ValidationException, ObjectNotFoundException;
 
-    ItemRequest getById(Integer userId, Integer id) throws ObjectNotFoundException;
+    ItemRequestDto getById(Integer userId, Integer id) throws ObjectNotFoundException;
 
-    List<ItemRequest> getAll(Integer userId);
+    List<ItemRequestDto> getAll(Integer userId);
 
-    List<ItemRequest> getAll(Integer ownerId, Integer from, Integer size);
+    List<ItemRequestDto> getAll(Integer ownerId, Integer from, Integer size);
 
 }

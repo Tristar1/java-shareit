@@ -15,14 +15,12 @@ public class ItemRequestController {
     private final RequestService requestService;
 
     @GetMapping
-    @ResponseBody
-    public List<ItemRequest> getAll(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+    public List<ItemRequestDto> getAll(@RequestHeader("X-Sharer-User-Id") Integer userId) {
         return requestService.getAll(userId);
     }
 
     @GetMapping("/all")
-    @ResponseBody
-    public List<ItemRequest> findAll(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
+    public List<ItemRequestDto> findAll(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
                                      @RequestParam(name = "from", defaultValue = "1") Integer from,
                                      @RequestParam(name = "size", defaultValue = "10") Integer size) throws ValidationException {
         if (from < 0 || size <= 0) {
@@ -32,14 +30,14 @@ public class ItemRequestController {
     }
 
     @PostMapping
-    public ItemRequest create(@RequestHeader("X-Sharer-User-Id") Integer userId, @RequestBody ItemRequestDto requestDto) throws ValidationException {
+    public ItemRequest create(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                              @RequestBody ItemRequestDto requestDto) throws ValidationException {
         requestDto.setRequestorId(userId);
         return requestService.create(requestDto);
     }
 
     @GetMapping("/{requestId}")
-    @ResponseBody
-    public ItemRequest getRequestById(@PathVariable("requestId") Integer id,
+    public ItemRequestDto getRequestById(@PathVariable("requestId") Integer id,
                                       @RequestHeader("X-Sharer-User-Id") Integer userId) {
         return requestService.getById(userId, id);
     }

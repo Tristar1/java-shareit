@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.RequestMapper;
 import ru.practicum.shareit.user.UserRepository;
@@ -33,7 +31,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public ItemRequest getById(Integer userId, Integer id) throws ObjectNotFoundException {
+    public ItemRequestDto getById(Integer userId, Integer id) throws ObjectNotFoundException {
         userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + userId));
         Optional<ItemRequest> request = requestRepository.findById(id);
@@ -42,38 +40,26 @@ public class RequestServiceImpl implements RequestService {
             throw new ObjectNotFoundException("Запрос с id " + id + " не найден!");
         }
 
-        setItems(request.get());
-        return request.get();
+        return RequestMapper.mapToRequestDto(request.get());
     }
 
     @Override
-    public List<ItemRequest> getAll(Integer userId) {
+    public List<ItemRequestDto> getAll(Integer userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + userId));
         List<ItemRequest> requestList = requestRepository.findAllByRequestorIdOrderByCreatedDesc(userId);
 
-        for (ItemRequest request : requestList) {
-            setItems(request);
-        }
-
-        return requestList;
+        return RequestMapper.mapToRequestDto(requestList);
     }
 
     @Override
-    public List<ItemRequest> getAll(Integer ownerId, Integer from, Integer size) {
+    public List<ItemRequestDto> getAll(Integer ownerId, Integer from, Integer size) {
         userRepository.findById(ownerId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + ownerId));
         List<ItemRequest> requestList = requestRepository.findAllByOwnerIdOrderByCreatedDesc(ownerId)
                 .stream().skip(from).limit(size).collect(Collectors.toList());
-        for (ItemRequest request : requestList) {
-            setItems(request);
-        }
 
-        return requestList;
+        return RequestMapper.mapToRequestDto(requestList);
     }
 
-    private void setItems(ItemRequest itemRequest) {
-        List<Item> itemList = itemRepository.findAllByRequest_Id(itemRequest.getId());
-        itemRequest.setItems(ItemMapper.mapToItemDto(itemList));
-    }
 }
