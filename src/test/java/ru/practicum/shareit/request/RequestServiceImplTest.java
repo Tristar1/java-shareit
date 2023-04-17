@@ -91,6 +91,7 @@ class RequestServiceImplTest {
 
         request = RequestMapper.mapToRequest(requestDto);
         request.setRequestor(user);
+        request.setId(1);
 
         List<ItemRequest> requestList = new ArrayList<>();
         requestList.add(request);

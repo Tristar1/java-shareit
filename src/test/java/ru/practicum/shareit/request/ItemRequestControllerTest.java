@@ -61,10 +61,9 @@ class ItemRequestControllerTest {
 
     @Test
     void getAll() throws Exception {
-        List<ItemRequest> itemRequests = new ArrayList<>();
+        List<ItemRequestDto> itemRequests = new ArrayList<>();
 
-        request = RequestMapper.mapToRequest(requestDto);
-        itemRequests.add(request);
+        itemRequests.add(requestDto);
         when(itemRequestService.getAll(userDto.getId()))
                 .thenReturn(itemRequests);
 
@@ -76,10 +75,9 @@ class ItemRequestControllerTest {
 
     @Test
     void findAll() throws Exception {
-        List<ItemRequest> itemRequests = new ArrayList<>();
+        List<ItemRequestDto> itemRequests = new ArrayList<>();
 
-        request = RequestMapper.mapToRequest(requestDto);
-        itemRequests.add(request);
+        itemRequests.add(requestDto);
         when(itemRequestService.getAll(userDto.getId(), 0, 1))
                 .thenReturn(itemRequests);
 
@@ -111,10 +109,9 @@ class ItemRequestControllerTest {
     void getRequestById() throws Exception {
 
         requestDto.setId(1);
-        request = RequestMapper.mapToRequest(requestDto);
 
         when(itemRequestService.getById(user.getId(), requestDto.getId()))
-                .thenReturn(request);
+                .thenReturn(requestDto);
 
         this.mockMvc
                 .perform(get("/requests/1")
