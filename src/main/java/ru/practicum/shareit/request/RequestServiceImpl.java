@@ -19,7 +19,6 @@ public class RequestServiceImpl implements RequestService {
 
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
-    private final ItemRepository itemRepository;
 
     @Override
     public ItemRequest create(ItemRequestDto requestDto) throws ValidationException, ObjectNotFoundException {
