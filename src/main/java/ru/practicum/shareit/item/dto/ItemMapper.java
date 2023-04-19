@@ -13,15 +13,16 @@ public class ItemMapper {
     public static ItemDto mapToItemDto(Item item) {
 
         return ItemDto.builder()
+                .id(item.getId())
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .ownerId(item.getOwner().getId())
                 .name(item.getName())
-                .requestId(item.getRequest().getId())
+                .requestId((item.getRequest() == null) ? null : item.getRequest().getId())
                 .build();
     }
 
-    public static List<ItemDto> mapToUserDto(Iterable<Item> items) {
+    public static List<ItemDto> mapToItemDto(Iterable<Item> items) {
         List<ItemDto> result = new ArrayList<>();
 
         for (Item item : items) {
@@ -31,7 +32,7 @@ public class ItemMapper {
         return result;
     }
 
-    public static Item mapToNewItem(ItemDto itemDto) {
+    public static Item mapToItem(ItemDto itemDto) {
 
         return Item.builder()
                 .description(itemDto.getDescription())

@@ -22,20 +22,20 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-    @Column(name = "start_Time", nullable = false)
+    @Column(name = "start_time", nullable = false)
     LocalDateTime start;
-    @Column(name = "end_Time", nullable = false)
+    @Column(name = "end_time", nullable = false)
     LocalDateTime end;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "item_Id")
+
+    @JoinColumn(name = "item_id")
     Item item;
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "user_Id")
+    @JoinColumn(name = "booker_id")
     User booker;
-
     @Builder.Default
     @Enumerated(EnumType.STRING)
     Status status = Status.WAITING;

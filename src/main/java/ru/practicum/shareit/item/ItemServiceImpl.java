@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -13,12 +14,14 @@ import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.RequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Primary
 @Service
@@ -26,18 +29,21 @@ import java.util.Optional;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
+    private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
-    private final CommentValidator commentValidator;
 
     @Override
-    public Item create(ItemDto itemDto) throws ValidationException {
-        Item item = ItemMapper.mapToNewItem(itemDto);
+    public ItemDto create(ItemDto itemDto) throws ValidationException {
+        Item item = ItemMapper.mapToItem(itemDto);
         ItemValidator.valid(item);
         item.setOwner(userRepository.findById(itemDto.getOwnerId())
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + itemDto.getOwnerId())));
-        return itemRepository.save(item);
+        if (itemDto.getRequestId() != null) {
+            item.setRequest(requestRepository.findById(itemDto.getRequestId()).orElseThrow());
+        }
+        return ItemMapper.mapToItemDto(itemRepository.save(item));
     }
 
     @Override
@@ -47,17 +53,22 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + commentDto.getAuthorId())));
         comment.setItem(itemRepository.findById(commentDto.getItemId())
                 .orElseThrow(() -> new ObjectNotFoundException("Предмет не найден id " + commentDto.getItemId())));
-        commentValidator.valid(comment);
+
+        if (bookingRepository.findAllByBooker_IdAndStatusAndEndBefore(comment.getAuthor().getId(),
+                Status.APPROVED, comment.getCreated()).isEmpty()) {
+            throw new ValidationException("Вы не можете оставлять комментарйи к этой вещи так как не брали ее в аренду!");
+        }
+        CommentValidator.valid(comment);
         return CommentMapper.mapToCommentDto(commentRepository.save(comment));
     }
 
     @Override
-    public Item update(ItemDto itemDto) throws ValidationException {
+    public ItemDto update(ItemDto itemDto) throws ValidationException {
         Item item = itemRepository.findById(itemDto.getId()).orElseThrow();
         ItemMapper.updateItemFields(item, itemDto);
         ItemValidator.valid(item);
-        itemRepository.saveAndFlush(item);
-        return itemRepository.findById(item.getId()).orElseThrow();
+        itemRepository.save(item);
+        return ItemMapper.mapToItemDto(itemRepository.findById(item.getId()).orElseThrow());
     }
 
     @Override
@@ -91,9 +102,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> getAll(Integer ownerId) {
+    public List<Item> getAll(Integer ownerId, Integer from, Integer size) {
         List<Item> itemList = new ArrayList<>();
-        for (Item item : itemRepository.findAllByOwnerId(ownerId)) {
+        for (Item item : itemRepository.findAllByOwnerId(ownerId).stream().skip(from).limit(size).collect(Collectors.toList())) {
             setComments(item);
             setBookings(item, ownerId);
             itemList.add(item);
@@ -103,8 +114,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> getByFilter(String textFilter, Integer userId) {
-        return itemRepository.findAllByTextFilter(textFilter, userId);
+    public List<Item> getByFilter(String textFilter, Integer userId, Integer from, Integer size) {
+        return itemRepository.findAllByTextFilter(textFilter, userId).stream().skip(from).limit(size).collect(Collectors.toList());
     }
 
     private void setBookings(Item item, Integer ownerId) {

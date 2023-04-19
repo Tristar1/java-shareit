@@ -33,7 +33,7 @@ public class Item {
     private Boolean available;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
     @Transient
@@ -44,6 +44,7 @@ public class Item {
     @Transient
     private BookingDto nextBooking;
 
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
     private ItemRequest request;
 }

@@ -27,11 +27,11 @@ public class Comment {
     private LocalDateTime created;
 
     @ManyToOne
-    @JoinColumn(name = "user_Id", nullable = false)
+    @JoinColumn(name = "commentor_id", nullable = false)
     private User author;
 
     @ManyToOne
-    @JoinColumn(name = "item_Id", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
 }

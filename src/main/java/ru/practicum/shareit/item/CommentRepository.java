@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
-    @Query(value =  "select * from Comments where item_Id = ?1 order by id", nativeQuery = true)
+    @Query(value =  "select * from Comments where item_id = ?1 order by id", nativeQuery = true)
     List<Comment> findAllByItem_Id(Integer itemId);
 
 }

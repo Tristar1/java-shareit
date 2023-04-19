@@ -19,18 +19,22 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<Item> findAll(@RequestHeader("X-Sharer-User-Id") Integer ownerId) {
-        return itemService.getAll(ownerId);
+    public List<Item> findAll(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
+                              @RequestParam(name = "from", defaultValue = "0") Integer from,
+                              @RequestParam(name = "size", defaultValue = "25") Integer size) {
+        return itemService.getAll(ownerId, from, size);
     }
 
     @PostMapping
-    public Item create(@RequestHeader("X-Sharer-User-Id") Integer ownerId, @RequestBody ItemDto itemDto) throws ValidationException {
+    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
+                       @RequestBody ItemDto itemDto) throws ValidationException {
         itemDto.setOwnerId(ownerId);
         return itemService.create(itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public Item update(@RequestHeader("X-Sharer-User-Id") Integer ownerId, @RequestBody ItemDto itemDto, @PathVariable("itemId") Integer itemId) throws ValidationException {
+    public ItemDto update(@RequestHeader("X-Sharer-User-Id") Integer ownerId, @RequestBody ItemDto itemDto, @PathVariable("itemId") Integer itemId) throws ValidationException {
+
         itemDto.setOwnerId(ownerId);
         itemDto.setId(itemId);
         return itemService.update(itemDto);
@@ -66,10 +70,13 @@ public class ItemController {
 
     @GetMapping("/search")
     @ResponseBody
-    public List<Item> getByTextFilter(@RequestHeader("X-Sharer-User-Id") Integer ownerId, @RequestParam String text) {
+    public List<Item> getByTextFilter(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
+                                      @RequestParam String text,
+                                      @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                      @RequestParam(name = "size", defaultValue = "25") Integer size) {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemService.getByFilter(text, ownerId);
+        return itemService.getByFilter(text, ownerId, from, size);
     }
 }

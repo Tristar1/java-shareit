@@ -13,6 +13,7 @@ import ru.practicum.shareit.user.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +40,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking update(BookingDto bookingDto) throws ValidationException {
-        Booking booking = getFirstByBookingList(bookingRepository.findByIdAndOwner(bookingDto.getId(), bookingDto.getBookerId()));
+        Booking booking = bookingRepository.findByIdAndOwner(bookingDto.getId(), bookingDto.getBookerId());
+        if (booking == null) {
+            throw new ObjectNotFoundException("Бронь с id " + bookingDto.getId() + " не найдена!");
+        }
+
         if (booking.getStatus() == Status.APPROVED) {
             throw new ValidationException("Нельзя менять статус после утверждения!");
         }
@@ -63,7 +68,13 @@ public class BookingServiceImpl implements BookingService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + userId));
 
-        return getFirstByBookingList(bookingRepository.findByIdAndBookerOrOwner(id, userId));
+        Booking booking = (bookingRepository.findByIdAndAndBooker_Id(id, userId) == null
+
+                ? bookingRepository.findByIdAndOwner(id, userId) : bookingRepository.findByIdAndAndBooker_Id(id, userId));
+        if (booking == null) {
+            throw new ObjectNotFoundException("Бронь с id " + id + " не найдена!");
+        }
+        return booking;
     }
 
     @Override
@@ -72,60 +83,59 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllByOwner(Integer ownerId, String state) throws ObjectNotFoundException, ValidationException {
+    public List<Booking> getAllByOwner(Integer ownerId, String state,
+                                       Integer from, Integer size, LocalDateTime dateTime) throws ObjectNotFoundException, ValidationException {
         userRepository.findById(ownerId).orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + ownerId));
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
         switch (state) {
             case "ALL":
-                return bookingRepository.findAllByItemOwner(ownerId);
+                return bookingRepository.findAllByItemOwner(ownerId).stream().skip(from).limit(size).collect(Collectors.toList());
             case "WAITING":
-                return bookingRepository.findAllByItemOwnerAndStatus(ownerId, Status.WAITING.toString().toUpperCase());
+                return bookingRepository.findAllByItemOwnerAndStatus(ownerId, Status.WAITING.toString().toUpperCase())
+                        .stream().skip(from).limit(size).collect(Collectors.toList());
             case "REJECTED":
-                return bookingRepository.findAllByItemOwnerAndStatus(ownerId, Status.REJECTED.toString().toUpperCase());
+                return bookingRepository.findAllByItemOwnerAndStatus(ownerId, Status.REJECTED.toString().toUpperCase())
+                        .stream().skip(from).limit(size).collect(Collectors.toList());
             case "PAST":
-                return bookingRepository.findAllByItemOwnerAndEndBefore(ownerId, LocalDateTime.now());
+                return bookingRepository.findAllByItemOwnerAndEndBefore(ownerId, dateTime)
+                        .stream().skip(from).limit(size).collect(Collectors.toList());
             case "FUTURE":
-                return bookingRepository.findAllByItemOwnerAndStartAfter(ownerId, LocalDateTime.now());
+                return bookingRepository.findAllByItemOwnerAndStartAfter(ownerId, dateTime)
+                        .stream().skip(from).limit(size).collect(Collectors.toList());
             case "CURRENT":
-                return bookingRepository.findCurrentOwnerBookings(ownerId, LocalDateTime.now());
+                return bookingRepository.findCurrentOwnerBookings(ownerId, dateTime)
+                        .stream().skip(from).limit(size).collect(Collectors.toList());
             default:
                 throw new ValidationException("Unknown state: " + state);
         }
     }
 
     @Override
-    public BookingRepository getBookingRepository() {
-        return bookingRepository;
-    }
 
-    @Override
-    public List<Booking> getAll(Integer bookerId, String state) throws ValidationException {
+    public List<Booking> getAll(Integer bookerId, String state,
+                                Integer from, Integer size, LocalDateTime dateTime) throws ValidationException {
         userRepository.findById(bookerId).orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + bookerId));
+        Sort sort = Sort.by(Sort.Direction.DESC, "start");
 
         switch (state) {
             case "ALL":
-                return bookingRepository.findAllByBooker_Id(bookerId, Sort.by(Sort.Direction.DESC, "start"));
+                return bookingRepository.findAllByBooker_Id(bookerId, sort).stream().skip(from).limit(size).collect(Collectors.toList());
             case "WAITING":
-                return bookingRepository.findAllByBooker_IdAndStatus(bookerId, Status.WAITING, Sort.by(Sort.Direction.DESC, "start"));
+                return bookingRepository.findAllByBooker_IdAndStatus(bookerId,
+                        Status.WAITING, sort).stream().skip(from).limit(size).collect(Collectors.toList());
             case "REJECTED":
-                return bookingRepository.findAllByBooker_IdAndStatus(bookerId, Status.REJECTED, Sort.by(Sort.Direction.DESC, "start"));
+                return bookingRepository.findAllByBooker_IdAndStatus(bookerId,
+                        Status.REJECTED, sort).stream().skip(from).limit(size).collect(Collectors.toList());
             case "PAST":
-                return bookingRepository.findAllByEndBefore(LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"));
+                return bookingRepository.findAllByEndBefore(dateTime, sort).stream().skip(from).limit(size).collect(Collectors.toList());
             case "FUTURE":
-                return bookingRepository.findAllByStartAfter(LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"));
+                return bookingRepository.findAllByStartAfter(dateTime, sort).stream().skip(from).limit(size).collect(Collectors.toList());
             case "CURRENT":
-                return bookingRepository.findCurrentBookings(bookerId, LocalDateTime.now());
+                return bookingRepository.findCurrentBookings(bookerId, dateTime).stream().skip(from).limit(size).collect(Collectors.toList());
             default:
                 throw new ValidationException("Unknown state: " + state);
         }
 
-    }
-
-    private Booking getFirstByBookingList(List<Booking> bookingList) {
-        if (bookingList.isEmpty()) {
-            throw new ObjectNotFoundException("Бронь не найдена!");
-        }
-
-        return bookingList.get(0);
     }
 
 }

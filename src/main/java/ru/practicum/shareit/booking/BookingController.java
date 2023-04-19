@@ -6,6 +6,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.exception.ValidationException;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,19 +18,30 @@ public class BookingController {
 
     @GetMapping
     public List<Booking> findAll(@RequestHeader("X-Sharer-User-Id") Integer bookerId,
-                                 @RequestParam(name = "state", defaultValue = "ALL") String state) throws ValidationException {
-        return bookingService.getAll(bookerId, state.toUpperCase());
+                                 @RequestParam(name = "state", defaultValue = "ALL") String state,
+                                 @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                 @RequestParam(name = "size", defaultValue = "25") Integer size) throws ValidationException {
+        if (from < 0 || size <= 0) {
+            throw new ValidationException("Неверно заполнены параметры постраничного просмотра!");
+        }
+        return bookingService.getAll(bookerId, state.toUpperCase(), from, size, LocalDateTime.now());
     }
 
     @GetMapping("/owner")
     public List<Booking> getByOwner(@RequestHeader("X-Sharer-User-Id") Integer bookerId,
-                                    @RequestParam(name = "state", defaultValue = "ALL") String state) throws ValidationException {
-        return bookingService.getAllByOwner(bookerId, state);
+                                    @RequestParam(name = "state", defaultValue = "ALL") String state,
+                                    @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                    @RequestParam(name = "size", defaultValue = "25") Integer size) throws ValidationException {
+        if (from < 0 || size <= 0) {
+            throw new ValidationException("Неверно заполнены параметры постраничного просмотра!");
+        }
+        return bookingService.getAllByOwner(bookerId, state.toUpperCase(), from, size, LocalDateTime.now());
     }
 
     @PostMapping
     @ResponseBody
-    public Booking create(@RequestHeader("X-Sharer-User-Id") Integer ownerId, @RequestBody BookingDto bookingDto) throws ValidationException {
+    public Booking create(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
+                          @RequestBody BookingDto bookingDto) throws ValidationException {
         bookingDto.setBookerId(ownerId);
         return bookingService.create(bookingDto);
     }
@@ -64,6 +76,5 @@ public class BookingController {
                                   @PathVariable("id") Integer id) {
         return bookingService.getByIdAndUserId(id, userId);
     }
-
 
 }

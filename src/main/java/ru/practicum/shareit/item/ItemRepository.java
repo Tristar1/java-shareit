@@ -16,4 +16,6 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
             "or lower(i.name) like lower(concat('%', ?1, '%'))) order by id")
     List<Item> findAllByTextFilter(String textFilter, Integer userId);
 
+    List<Item> findAllByRequest_Id(Integer requestId);
+
 }
