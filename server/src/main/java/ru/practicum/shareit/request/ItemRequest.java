@@ -32,6 +32,6 @@ public class ItemRequest {
     @JoinColumn(name = "requestor_id")
     private User requestor;
 
-    @OneToMany(mappedBy="request")
+    @OneToMany(mappedBy = "request")
     private List<Item> items;
 }

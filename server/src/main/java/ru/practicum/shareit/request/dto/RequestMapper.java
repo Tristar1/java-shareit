@@ -16,7 +16,7 @@ public class RequestMapper {
                 .description(request.getDescription())
                 .id(request.getId())
                 .created(request.getCreated())
-                .items( (request.getItems() == null) ? new ArrayList<>() : ItemMapper.toItemDto(request.getItems()))
+                .items((request.getItems() == null) ? new ArrayList<>() : ItemMapper.toItemDto(request.getItems()))
                 .build();
     }
 
