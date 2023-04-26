@@ -1,8 +1,8 @@
 version: '3.8'
 services:
   gateway:
-    build: .
-    image: nginx:latest
+    build: gateway/
+    image: amazoncorretto:11
     container_name: shareit_gateway
     ports:
       - "8080:8080"
@@ -12,8 +12,8 @@ services:
       - SHAREIT_SERVER_URL=http://server:9090
 
   server:
-    build: .
-    image: nginx:latest
+    build: server/
+    image: amazoncorretto:11
     container_name: shareit_server
     ports:
       - "9090:9090"
