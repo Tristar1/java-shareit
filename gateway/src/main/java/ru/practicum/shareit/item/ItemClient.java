@@ -54,7 +54,7 @@ public class ItemClient extends BaseClient {
     public ResponseEntity<Object> getItem(Long itemId, Long ownerId, LocalDateTime dateTime) {
         Map<String, Object> parameters = Map.of(
                 "dateTime", dateTime);
-        return get("/" + itemId + "?dateTime={dateTime}", ownerId ,parameters);
+        return get("/" + itemId + "?dateTime={dateTime}", ownerId, parameters);
     }
 
     public ResponseEntity<Object> updateItem(ItemDto requestDto) {
