@@ -44,10 +44,4 @@ public class ErrorHandler {
         );
     }
 
-    private Map<String, List<String>> getErrorsMap(List<String> errors) {
-        Map<String, List<String>> errorResponse = new HashMap<>();
-        errorResponse.put("errors", errors);
-        return errorResponse;
-    }
-
 }

@@ -2,7 +2,7 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.RequestMapper;
@@ -20,21 +20,21 @@ public class RequestServiceImpl implements RequestService {
     private final UserRepository userRepository;
 
     @Override
-    public ItemRequest create(ItemRequestDto requestDto) throws ValidationException, ObjectNotFoundException {
+    public ItemRequest create(ItemRequestDto requestDto) throws ValidationException, NotFoundException {
         ItemRequest request = RequestMapper.toRequest(requestDto);
         request.setRequestor(userRepository.findById(requestDto.getRequestorId())
-                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + requestDto.getRequestorId())));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден id " + requestDto.getRequestorId())));
         return requestRepository.save(request);
     }
 
     @Override
-    public ItemRequestDto getById(Long userId, Long id) throws ObjectNotFoundException {
+    public ItemRequestDto getById(Long userId, Long id) throws NotFoundException {
         userRepository.findById(userId)
-                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + userId));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден id " + userId));
         Optional<ItemRequest> request = requestRepository.findById(id);
 
         if (request.isEmpty()) {
-            throw new ObjectNotFoundException("Запрос с id " + id + " не найден!");
+            throw new NotFoundException("Запрос с id " + id + " не найден!");
         }
 
         return RequestMapper.toRequestDto(request.get());
@@ -43,7 +43,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public List<ItemRequestDto> getAll(Long userId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + userId));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден id " + userId));
         List<ItemRequest> requestList = requestRepository.findAllByRequestorIdOrderByCreatedDesc(userId);
 
         return RequestMapper.toRequestDto(requestList);
@@ -52,7 +52,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public List<ItemRequestDto> getAll(Long ownerId, Integer from, Integer size) {
         userRepository.findById(ownerId)
-                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + ownerId));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден id " + ownerId));
         List<ItemRequest> requestList = requestRepository.findAllByOwnerIdOrderByCreatedDesc(ownerId)
                 .stream().skip(from).limit(size).collect(Collectors.toList());
 

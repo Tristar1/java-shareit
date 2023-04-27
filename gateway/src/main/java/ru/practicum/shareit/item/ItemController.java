@@ -11,6 +11,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @RestController
@@ -25,7 +26,7 @@ public class ItemController {
     public ResponseEntity<Object> findAll(@RequestHeader("X-Sharer-User-Id") Long ownerId,
                                           @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                           @Positive @RequestParam(name = "size", defaultValue = "25") Integer size) {
-        return itemClient.getItems(ownerId, from, size);
+        return itemClient.getItems(ownerId, from, size, LocalDateTime.now());
     }
 
     @PostMapping
@@ -67,7 +68,7 @@ public class ItemController {
     @ResponseBody
     public ResponseEntity<Object> getItemById(@PathVariable("id") Long id,
                                               @RequestHeader("X-Sharer-User-Id") Long ownerId) {
-        return (!(ownerId == null)) ? itemClient.getItem(id, ownerId) : itemClient.getItem(id);
+        return (!(ownerId == null)) ? itemClient.getItem(id, ownerId, LocalDateTime.now()) : itemClient.getItem(id, LocalDateTime.now());
     }
 
     @GetMapping("/search")

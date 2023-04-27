@@ -28,7 +28,6 @@ public class ItemRequest {
     private LocalDateTime created;
 
     @OneToOne
-    @MapsId
     @JoinColumn(name = "requestor_id")
     private User requestor;
 

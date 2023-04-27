@@ -1,12 +1,14 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -19,8 +21,9 @@ public class ItemController {
     @GetMapping
     public List<Item> findAll(@RequestHeader("X-Sharer-User-Id") Long ownerId,
                               @RequestParam(name = "from", defaultValue = "0") Integer from,
-                              @RequestParam(name = "size", defaultValue = "25") Integer size) {
-        return itemService.getAll(ownerId, from, size);
+                              @RequestParam(name = "size", defaultValue = "25") Integer size,
+                              @RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
+        return itemService.getAll(ownerId, from, size, dateTime);
     }
 
     @PostMapping
@@ -53,8 +56,9 @@ public class ItemController {
     @GetMapping("/{id}")
     @ResponseBody
     public Item getItemById(@PathVariable("id") Long id,
-                            @RequestHeader("X-Sharer-User-Id") Long ownerId) {
-        return (!(ownerId == null)) ? itemService.getById(id, ownerId) : itemService.getById(id);
+                            @RequestHeader("X-Sharer-User-Id") Long ownerId,
+                            @RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) {
+        return (!(ownerId == null)) ? itemService.getById(id, ownerId, dateTime) : itemService.getById(id, dateTime);
     }
 
     @GetMapping("/search")

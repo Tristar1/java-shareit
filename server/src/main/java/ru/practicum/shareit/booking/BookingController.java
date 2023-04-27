@@ -31,9 +31,10 @@ public class BookingController {
     public List<Booking> getByOwner(@RequestHeader("X-Sharer-User-Id") Long bookerId,
                                     @RequestParam(name = "state", defaultValue = "ALL") String state,
                                     @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                    @RequestParam(name = "size", defaultValue = "25") Integer size) throws ValidationException {
+                                    @RequestParam(name = "size", defaultValue = "25") Integer size,
+                                    @RequestParam(name = "dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime) throws ValidationException {
 
-        return bookingService.getAllByOwner(bookerId, state.toUpperCase(), from, size, LocalDateTime.now());
+        return bookingService.getAllByOwner(bookerId, state.toUpperCase(), from, size, dateTime);
     }
 
     @PostMapping

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -19,12 +20,12 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody UserDto user) {
+    public Optional<User> create(@RequestBody UserDto user) {
         return userService.create(user);
     }
 
     @PatchMapping
-    public User update(@RequestBody UserDto userDto) {
+    public Optional<User> update(@RequestBody UserDto userDto) {
         return userService.update(userDto);
     }
 
@@ -41,8 +42,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @ResponseBody
-    public User getUserById(@PathVariable("id") Long id) {
+    public Optional<User> getUserById(@PathVariable("id") Long id) {
         return userService.getById(id);
     }
 }

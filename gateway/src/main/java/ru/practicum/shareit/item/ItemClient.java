@@ -10,6 +10,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.item.dto.CommentRequestDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
@@ -27,11 +29,12 @@ public class ItemClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getItems(Long ownerId, Integer from, Integer size) {
+    public ResponseEntity<Object> getItems(Long ownerId, Integer from, Integer size, LocalDateTime dateTime) {
         Map<String, Object> parameters = Map.of(
                 "from", from,
-                "size", size);
-        return get("", ownerId, parameters);
+                "size", size,
+                "dateTime", dateTime);
+        return get("" + "?from={from}&size={size}&dateTime={dateTime}", ownerId, parameters);
     }
 
     public ResponseEntity<Object> createItem(ItemDto requestDto) {
@@ -42,14 +45,16 @@ public class ItemClient extends BaseClient {
         return post("/" + requestDto.getItemId() + "/comment", requestDto);
     }
 
-    public ResponseEntity<Object> getItem(Long itemId) {
-        return get("/" + itemId, itemId);
+    public ResponseEntity<Object> getItem(Long itemId, LocalDateTime dateTime) {
+        Map<String, Object> parameters = Map.of(
+                "dateTime", dateTime);
+        return get("/" + itemId + "?dateTime={dateTime}", null, parameters);
     }
 
-    public ResponseEntity<Object> getItem(Long itemId, Long ownerId) {
+    public ResponseEntity<Object> getItem(Long itemId, Long ownerId, LocalDateTime dateTime) {
         Map<String, Object> parameters = Map.of(
-                "itemId", itemId);
-        return get("/" + itemId, ownerId, parameters);
+                "dateTime", dateTime);
+        return get("/" + itemId + "?dateTime={dateTime}", ownerId ,parameters);
     }
 
     public ResponseEntity<Object> updateItem(ItemDto requestDto) {

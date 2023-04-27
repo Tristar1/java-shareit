@@ -7,7 +7,7 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentMapper;
@@ -35,10 +35,10 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Override
-    public ItemDto create(ItemDto itemDto) throws ObjectNotFoundException {
+    public ItemDto create(ItemDto itemDto) {
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(userRepository.findById(itemDto.getOwnerId())
-                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + itemDto.getOwnerId())));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден id " + itemDto.getOwnerId())));
         if (itemDto.getRequestId() != null) {
             item.setRequest(requestRepository.findById(itemDto.getRequestId()).orElseThrow());
         }
@@ -49,9 +49,9 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto createComment(CommentDto commentDto) throws ValidationException {
         Comment comment = CommentMapper.mapToNewComment(commentDto);
         comment.setAuthor(userRepository.findById(commentDto.getAuthorId())
-                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + commentDto.getAuthorId())));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден id " + commentDto.getAuthorId())));
         comment.setItem(itemRepository.findById(commentDto.getItemId())
-                .orElseThrow(() -> new ObjectNotFoundException("Предмет не найден id " + commentDto.getItemId())));
+                .orElseThrow(() -> new NotFoundException("Предмет не найден id " + commentDto.getItemId())));
 
         if (bookingRepository.findAllByBooker_IdAndStatusAndEndBefore(comment.getAuthor().getId(),
                 Status.APPROVED, comment.getCreated()).isEmpty()) {
@@ -63,48 +63,48 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto update(ItemDto itemDto) {
         Item item = itemRepository.findById(itemDto.getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Предмет не найден id " + itemDto.getId()));
+                .orElseThrow(() -> new NotFoundException("Предмет не найден id " + itemDto.getId()));
         ItemMapper.updateItemFields(item, itemDto);
         itemRepository.save(item);
         return ItemMapper.toItemDto(itemRepository.findById(item.getId()).orElseThrow());
     }
 
     @Override
-    public Item getById(Long id) throws ObjectNotFoundException {
+    public Item getById(Long id, LocalDateTime dateTime) throws NotFoundException {
         Optional<Item> item = itemRepository.findById(id);
 
         if (item.isEmpty()) {
-            throw new ObjectNotFoundException("Предмет с id " + id + " не найден!");
+            throw new NotFoundException("Предмет с id " + id + " не найден!");
         }
 
         return item.get();
     }
 
     @Override
-    public Item getById(Long id, Long ownerId) throws ObjectNotFoundException {
+    public Item getById(Long id, Long ownerId, LocalDateTime dateTime) throws NotFoundException {
         Optional<Item> item = itemRepository.findById(id);
 
         if (item.isEmpty()) {
-            throw new ObjectNotFoundException("Предмет с id " + id + " не найден!");
+            throw new NotFoundException("Предмет с id " + id + " не найден!");
         }
 
-        setBookings(item.get(), ownerId);
+        setBookings(item.get(), ownerId, dateTime);
         setComments(item.get());
 
         return item.get();
     }
 
     @Override
-    public void delete(Long id) throws ObjectNotFoundException {
+    public void delete(Long id) throws NotFoundException {
         itemRepository.deleteById(id);
     }
 
     @Override
-    public List<Item> getAll(Long ownerId, Integer from, Integer size) {
+    public List<Item> getAll(Long ownerId, Integer from, Integer size, LocalDateTime dateTime) {
         List<Item> itemList = new ArrayList<>();
         for (Item item : itemRepository.findAllByOwnerId(ownerId).stream().skip(from).limit(size).collect(Collectors.toList())) {
             setComments(item);
-            setBookings(item, ownerId);
+            setBookings(item, ownerId, dateTime);
             itemList.add(item);
         }
 
@@ -116,13 +116,13 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.findAllByTextFilter(textFilter, userId).stream().skip(from).limit(size).collect(Collectors.toList());
     }
 
-    private void setBookings(Item item, Long ownerId) {
+    private void setBookings(Item item, Long ownerId, LocalDateTime dateTime) {
 
         if (item.getOwner().getId().equals(ownerId)) {
-            Optional<Booking> nextBooking = bookingRepository.findFirstByByItemIdAndStartAfter(item.getId(), LocalDateTime.now());
+            Optional<Booking> nextBooking = bookingRepository.findFirstByByItemIdAndStartAfter(item.getId(), dateTime);
             item.setNextBooking(nextBooking.isEmpty() ? null : BookingMapper.toBookingDto(nextBooking.get()));
 
-            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndEndBefore(item.getId(), LocalDateTime.now());
+            Optional<Booking> lastBooking = bookingRepository.findFirstByItemIdAndEndBefore(item.getId(), dateTime);
             item.setLastBooking(lastBooking.isEmpty() ? null : BookingMapper.toBookingDto(lastBooking.get()));
         }
     }

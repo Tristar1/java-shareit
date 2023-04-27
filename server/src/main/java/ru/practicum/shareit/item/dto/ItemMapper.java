@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class ItemMapper {
     public static void updateItemFields(Item item, ItemDto itemDto) {
 
         if (!Objects.equals(itemDto.getOwnerId(), item.getOwner().getId())) {
-            throw new ObjectNotFoundException("Невозможно поменять владельца предмета!");
+            throw new NotFoundException("Невозможно поменять владельца предмета!");
         }
 
         if (itemDto.getName() != null && !itemDto.getName().isBlank()) {

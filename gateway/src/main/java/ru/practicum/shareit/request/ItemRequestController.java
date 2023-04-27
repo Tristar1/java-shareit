@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 @RestController
 @RequestMapping("/requests")
@@ -24,11 +25,9 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> findAll(@RequestHeader("X-Sharer-User-Id") Long ownerId,
-                                     @RequestParam(name = "from", defaultValue = "1")  Integer from,
-                                     @RequestParam(name = "size", defaultValue = "10") Integer size) throws ValidationException {
-        if (from < 0 || size <= 0) {
-            throw new ValidationException("Неверно заполнены параметры постраничного просмотра!");
-        }
+                                     @PositiveOrZero @RequestParam(name = "from", defaultValue = "0")  Integer from,
+                                     @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+
         return requestClient.getItemRequestsAll(ownerId, from, size);
     }
 

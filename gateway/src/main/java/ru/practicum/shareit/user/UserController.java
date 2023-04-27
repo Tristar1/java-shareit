@@ -42,7 +42,6 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @ResponseBody
     public ResponseEntity<Object> getUserById(@PathVariable("id") Long id) {
         return userClient.getUser(id);
     }

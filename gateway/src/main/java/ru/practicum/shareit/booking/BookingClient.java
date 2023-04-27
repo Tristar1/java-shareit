@@ -45,7 +45,7 @@ public class BookingClient extends BaseClient {
                 "size", size,
                 "dateTime", dateTime
         );
-        return get("/owner?state={state}&from={from}&size={size}", userId, parameters);
+        return get("/owner?state={state}&from={from}&size={size}&dateTime={dateTime}", userId, parameters);
     }
 
     public ResponseEntity<Object> update(Long bookingId, Long userId, Boolean state) {

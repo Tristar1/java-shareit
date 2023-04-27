@@ -5,7 +5,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
@@ -27,9 +27,9 @@ public class BookingServiceImpl implements BookingService {
     public Booking create(BookingDto bookingDto) throws ValidationException {
         Booking booking = BookingMapper.toBooking(bookingDto);
         booking.setBooker(userRepository.findById(bookingDto.getBookerId())
-                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + bookingDto.getBookerId())));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден id " + bookingDto.getBookerId())));
         booking.setItem(itemRepository.findById(bookingDto.getItemId())
-                .orElseThrow(() -> new ObjectNotFoundException("Предмет не найден id " + bookingDto.getItemId())));
+                .orElseThrow(() -> new NotFoundException("Предмет не найден id " + bookingDto.getItemId())));
         BookingValidator.valid(booking);
         if (!bookingRepository.havingBookingsAtCurrentDate(bookingDto.getItemId(), booking.getStart()).isEmpty()) {
             throw new ValidationException("Пердмет " + booking.getItem().toString() +
@@ -42,7 +42,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking update(BookingDto bookingDto) throws ValidationException {
         Booking booking = bookingRepository.findByIdAndOwner(bookingDto.getId(), bookingDto.getBookerId());
         if (booking == null) {
-            throw new ObjectNotFoundException("Бронь с id " + bookingDto.getId() + " не найдена!");
+            throw new NotFoundException("Бронь с id " + bookingDto.getId() + " не найдена!");
         }
 
         if (booking.getStatus() == Status.APPROVED) {
@@ -53,40 +53,39 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking getById(Long id) throws ObjectNotFoundException {
+    public Booking getById(Long id) throws NotFoundException {
         Optional<Booking> booking = bookingRepository.findById(id);
 
         if (booking.isEmpty()) {
-            throw new ObjectNotFoundException("Бронь с id " + id + " не найдена!");
+            throw new NotFoundException("Бронь с id " + id + " не найдена!");
         }
 
         return booking.get();
     }
 
     @Override
-    public Booking getByIdAndUserId(Long id, Long userId) throws ObjectNotFoundException {
+    public Booking getByIdAndUserId(Long id, Long userId) throws NotFoundException {
         userRepository.findById(userId)
-                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + userId));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден id " + userId));
 
         Booking booking = (bookingRepository.findByIdAndAndBooker_Id(id, userId) == null
 
                 ? bookingRepository.findByIdAndOwner(id, userId) : bookingRepository.findByIdAndAndBooker_Id(id, userId));
         if (booking == null) {
-            throw new ObjectNotFoundException("Бронь с id " + id + " не найдена!");
+            throw new NotFoundException("Бронь с id " + id + " не найдена!");
         }
         return booking;
     }
 
     @Override
-    public void delete(Long id) throws ObjectNotFoundException {
+    public void delete(Long id) throws NotFoundException {
         bookingRepository.deleteById(id);
     }
 
     @Override
     public List<Booking> getAllByOwner(Long ownerId, String state,
-                                       Integer from, Integer size, LocalDateTime dateTime) throws ObjectNotFoundException, ValidationException {
-        userRepository.findById(ownerId).orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + ownerId));
-        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+                                       Integer from, Integer size, LocalDateTime dateTime) throws NotFoundException, ValidationException {
+        userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException("Пользователь не найден id " + ownerId));
         switch (state) {
             case "ALL":
                 return bookingRepository.findAllByItemOwner(ownerId).stream().skip(from).limit(size).collect(Collectors.toList());
@@ -113,7 +112,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<Booking> getAll(Long bookerId, String state,
                                 Integer from, Integer size, LocalDateTime dateTime) throws ValidationException {
-        userRepository.findById(bookerId).orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден id " + bookerId));
+        userRepository.findById(bookerId).orElseThrow(() -> new NotFoundException("Пользователь не найден id " + bookerId));
         Sort sort = Sort.by(Sort.Direction.DESC, "start");
 
         switch (state) {
