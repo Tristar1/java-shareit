@@ -7,7 +7,6 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class ItemController {
     }
 
     @DeleteMapping
-    public Boolean deleteItem(@Valid @RequestBody ItemDto itemDto) {
+    public Boolean deleteItem(@RequestBody ItemDto itemDto) {
         itemService.delete(itemDto.getId());
         return true;
     }

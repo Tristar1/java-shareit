@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.exception.ValidationException;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -54,7 +53,7 @@ public class BookingController {
     }
 
     @DeleteMapping
-    public Boolean deleteBooking(@Valid @RequestBody BookingDto bookingDto) {
+    public Boolean deleteBooking(@RequestBody BookingDto bookingDto) {
         bookingService.delete(bookingDto.getId());
         return true;
     }
